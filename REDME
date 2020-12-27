@@ -1,0 +1,10 @@
+-- Verificar se o dispositivo está conectado e pronto para emular a aplicação,
+se aparecer device ao lado do aparelho ele está apto para emular a aplicação:
+# adb devices
+
+--Comando para iniciar o projeto:
+# yarn start
+
+--Comando para rodar emulador no aparelho android:
+# Ou yarn run react-native run-android
+# Ou yarn android
