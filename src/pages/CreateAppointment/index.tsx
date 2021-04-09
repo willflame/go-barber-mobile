@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
-import { Plataform } from 'react-native';
-import DateTimePicker from '@react-navite-community/datetimepicker';
+import { Platform } from 'react-native';
+import DateTimePicker from '@react-navite-community/DateTimePicker';
 
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
@@ -34,6 +34,11 @@ export interface Provider {
   avatar_url: string;
 }
 
+interface AvailabilityItem {
+  hour: number;
+  availability: boolean;
+}
+
 const CreateAppointment: React.FC = () => {
   const { user } = useAuth();
   const route = useRoute();
@@ -41,6 +46,7 @@ const CreateAppointment: React.FC = () => {
 
   const routeParams = route.params as RouteParams;
 
+  const [availability, setAvailability] = useState<AvailabilityItem[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [providers, setProviders] = useState<Provider[]>([]);
@@ -53,6 +59,18 @@ const CreateAppointment: React.FC = () => {
       setProviders(response.data);
     });
   }, []);
+
+  useEffect(() => {
+    api.get(`providers/${selectedProvider}/day-availability`, {
+      params: {
+        year: selectedDate.getFullYear(),
+        month: selectedDate.getMonth() + 1,
+        day: selectedDate.getDate(),
+      }
+    }).then(response => {
+      setAvailability(response.data);
+    });
+  }, [selectedDate, selectedProvider]);
 
   const navigateBack = useCallback(() => {
     goBack();
@@ -67,7 +85,7 @@ const CreateAppointment: React.FC = () => {
   }, []);
 
   const handleDateChange = useCallback((event: any, date: Date | undefined) => {
-    if (Plataform.OS === 'android') {
+    if (Platform.OS === 'android') {
       setShowDatePicker(false);
     }
 
@@ -113,9 +131,9 @@ const CreateAppointment: React.FC = () => {
         <Title>Escolha a data</Title>
 
         <OpenDatePickerButton onPress={handleToggleDatePiker}>
-          <OpenDatePikerButtonText>
+          <OpenDatePickerButtonText>
             Selecionar outra data
-          </OpenDatePikerButtonText>
+          </OpenDatePickerButtonText>
         </OpenDatePickerButton>
 
         {showDatePicker && (
