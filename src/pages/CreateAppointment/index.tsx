@@ -46,7 +46,7 @@ export interface Provider {
 
 interface AvailabilityItem {
   hour: number;
-  availability: boolean;
+  available: boolean;
 }
 
 const CreateAppointment: React.FC = () => {
@@ -108,10 +108,10 @@ const CreateAppointment: React.FC = () => {
   const morningAvailability = useMemo(() => {
     return availability
       .filter(({hour}) => hour < 12)
-      .map(({hour, availability}) => {
+      .map(({hour, available }) => {
         return {
           hour,
-          availability,
+          available,
           hourFormatted: format(new Date().setHours(hour), 'HH:00'),
         }
       })
